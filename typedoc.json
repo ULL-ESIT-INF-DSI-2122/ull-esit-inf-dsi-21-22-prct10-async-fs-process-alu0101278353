@@ -1,0 +1,8 @@
+{
+  "entryPoints": [
+      "./src/",
+      "./src/",
+      "./src/factoryMethod/agua"
+  ],
+  "out": "./docs"
+}

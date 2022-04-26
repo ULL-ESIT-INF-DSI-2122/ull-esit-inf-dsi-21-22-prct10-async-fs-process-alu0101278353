@@ -1,0 +1,31 @@
+{
+    "env": {
+        "browser": true,
+        "commonjs": true,
+        "es2021": true
+    },
+    "extends": [
+        "google"
+    ],
+    "parser": "@typescript-eslint/parser",
+    "parserOptions": {
+        "ecmaVersion": "latest"
+    },
+    "plugins": [
+        "@typescript-eslint"
+    ],
+    "rules": {
+        "require-jsdoc": "off",
+        "max-len": "off",
+        "no-trailing-spaces":"off",
+        "no-unused-vars":"off",
+        "brace-style":"off",
+        "valid-jsdoc":"off",
+        "prefer-const":"off",
+        "eol-last":"off",
+        "object-curly-spacing":"off",
+        "new-cap":"off",
+        "no-tabs":"off",
+        "indent":"off"
+    }
+}
