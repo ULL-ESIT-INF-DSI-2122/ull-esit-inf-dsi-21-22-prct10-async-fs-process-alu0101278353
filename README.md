@@ -2,7 +2,7 @@
 
 ### Alumna: Carla Fernanda Flores Gonzales
 ### Asignatura: Desarrollo de Sistemas Informáticos
-[https://ull-esit-inf-dsi-2122.github.io/ull-esit-inf-dsi-21-22-prct10-async-fs-process-alu0101278353/](GitHubPages)
+[GitHubPages](https://ull-esit-inf-dsi-2122.github.io/ull-esit-inf-dsi-21-22-prct10-async-fs-process-alu0101278353/)
 
 <p align= "center"> 
     <a href = 'https://github.com/ULL-ESIT-INF-DSI-2122/ull-esit-inf-dsi-21-22-prct10-async-fs-process-alu0101278353/actions/workflows/coveralls.yml'>
