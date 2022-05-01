@@ -1,5 +1,8 @@
 import {access, constants, watch} from 'fs';
-
+/**
+ * Este ejercicio es para el Analisis del código y de como es el estado del 
+ * contenido de la pila de llamadas, el registro de eventos de la API y la cola de manejadores.
+ */
 if (process.argv.length !== 3) {
   console.log('Please, specify a file');
 } else {
@@ -9,7 +12,6 @@ if (process.argv.length !== 3) {
     if (err) {
       console.log(`File ${filename} does not exist`);
     } else {
-      // console.log('false');
       console.log(`Starting to watch file ${filename}`);
 
       const watcher = watch(process.argv[2]);

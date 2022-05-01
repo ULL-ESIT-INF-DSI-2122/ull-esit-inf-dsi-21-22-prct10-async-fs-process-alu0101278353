@@ -1,8 +1,10 @@
 {
   "entryPoints": [
-      "./src/",
-      "./src/",
-      "./src/factoryMethod/agua"
+      "./src/ejercicio2/childProccess",
+      "./src/ejercicio3/class/ges-eventos.ts",
+      "./src/ejercicio3/class/note-app.ts",
+      "./src/ejercicio3/class/User.ts",
+      "./src/ejercicio-1.ts"
   ],
   "out": "./docs"
 }

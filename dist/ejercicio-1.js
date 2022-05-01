@@ -11,7 +11,7 @@ else {
             console.log(`File ${filename} does not exist`);
         }
         else {
-            console.log('false');
+            // console.log('false');
             console.log(`Starting to watch file ${filename}`);
             const watcher = (0, fs_1.watch)(process.argv[2]);
             watcher.on('change', () => {
