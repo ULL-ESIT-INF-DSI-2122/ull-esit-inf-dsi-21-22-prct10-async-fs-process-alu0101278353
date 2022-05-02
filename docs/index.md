@@ -40,10 +40,35 @@ if (process.argv.length !== 3) {
 
 La traza de ejecución de este código sería la siguiente:
 
-- Como inicio de ejecución del programa se llama al primer condicional `if (process.argv.length !== 3)` esto es, que si los argumentos por línea de comandos son distinto de tres, retornará valor `true`, pero en nuestro caso, va retornar `false`, porque le estamos pasando exactamente los tres argumentos. Ya que la salida de esa sentencia es un `false`, ahora pasa a la pila la llamada a la función `access`, esta función comprueba los permisos del usuario al fichero o directorio que se le pasa como primer argumento. Esta función recibe tres parámetros, el primero es el fichero al que se quiere acceder, el segundo los permisos, y como tercer argumento un manejador con parámetro `err`, si se produce un error al acceder al fichero imprimirá que el fichero no existe, ahora si no se produce un error entra a estar pendiente  de que se produzca cualquier envento de cambio en el fichero con el proceso hijo `watcher`, en esta situación la pila de llamadas sería la siguiente:
+- Como inicio de ejecución del programa se llama al primer condicional `if (process.argv.length !== 3)` esto es, que si los argumentos por línea de comandos son distinto de tres, retornará el valor `true`, pero en nuestro caso, va retornar `false`, porque le estamos pasando exactamente los tres argumentos. Ya que la salida de esa sentencia es un `false`, ahora pasa a la pila la llamada a la función `access`, esta función comprueba los permisos del usuario al fichero o directorio que se le pasa como primer argumento. Esta función recibe tres parámetros, el primero es el fichero al que se quiere acceder, el segundo los permisos, y como tercer argumento un manejador con parámetro `err`, si se produce un error al acceder al fichero imprimirá que el fichero no existe, ahora si no se produce un error entra a estar pendiente  de que se produzca cualquier envento de cambio en el fichero con el objeto `watcher` que a su vez es un objeto `EventEmitter`, en esta situación la pila de llamadas sería la siguiente:
 
+[Imagen 1](https://drive.google.com/file/d/1pjCPdNWuzWbhviQ15yJsEb1NWgldi_Mr/view?usp=sharing)
 
+Como se puede ver, entra a la pila de llamadas, luego pasa a la API Web a esperar que se produzca culquier cambio de tipo `change`, que es al que estará pendiente.
 
+Ahora vamos a ver el contenido del fichero `helloWorld.txt` es el siguiente:
+```txt
+Hello world!!
+```
+Si añadimos una línea más  al txt como: `"Hello again"`, se producirá un evento `change`, ahora pasa a la cola de manejadores, esperando a que la pila de llamadas esté vacía para pasar a ella, en este caso la pila está vacía. Aquí lo vemos en la siguiente imagen:
+
+[Imagen 2](https://drive.google.com/file/d/1VtOKaakQaAlKXF7mnoLeAwZilHtvoI0z/view?usp=sharing)
+
+Y como está vacía, pasa a la pila el watcher con el evento de tipo `change`, a continuación se muestra en la imagen.
+
+[Imagen 3](https://drive.google.com/file/d/1SL0qJ9vcCi-hOghzgnxNWT1k1wI14xtU/view?usp=sharing)
+
+Este evento llamará al `console.log()` que imprirá que el fichero ha sido modificado.
+
+[Imagen 4](https://drive.google.com/file/d/1LZ5EtLq6CDhVeQ3XJx1r6qUPx46WVfhZ/view?usp=sharing)
+
+Ahora en la pila está el `console.log()` e imprime que el fichero ha sido modificado-
+
+[Imagen 5](https://drive.google.com/file/d/1HyOEV-920C26iq-ajuYBodFzj_IGtKEy/view?usp=sharing)
+
+Ahora la pila queda vacía, y en la API Web esta el `watcher` esperando a que se produzca otro evento `change`.
+
+[Imagen 6](https://drive.google.com/file/d/1RXgTKgXIX58mhqlVpa5Zssmfw7fb36zm/view?usp=sharing)
 
 <a name=item2></a>
 
@@ -98,10 +123,31 @@ A Continuación
 });
 ```
 Como se puede ver para el conteo de palabras repetidas, hago el uso de la expresión regular `/[\s\.,]+/gi` donde elimina los espacios en blancos y caracter, con los flags **gi**, se tendría un resultado asi: `['carla', 'vive', 'en','tenrife']`, y con el método watch llamandado al `dataString`(Salida del comando grep), para buscar la palabra en esa cadena. De esta manera devuelve un índice de coincidencia.
-La salida sería la siguiente:
-```console
 
-``` 
+La salida sería la siguiente:
+
+```console
+[~/p10(master)]$node dist/ejercicio2/childProccess.js pipe --file="/home/usuario/p10/src/ejercicio2/prueba.txt" --word="tenerife"
+RESULTADO DEL "CHILDPROCCESS" GREP
+carla vive en en tenerife.
+IDICES IGUALES SON PALABRAS QUE SE REPITEN
+La palabra "carla" tiene el index "0"
+La palabra "vive" tiene el index "6"
+La palabra "en" tiene el index "11"
+La palabra "en" tiene el index "11"
+La palabra "tenerife" tiene el index "17"
+La palabra "" tiene el index "0"
+```
+
+Teniendo el fichero `prueba.txt` el siguiente contenido:
+
+```console
+[~/p10(master)]$cat ./src/ejercicio2/prueba.txt 
+hola mi nombre es carla.
+carla vive en en tenerife.
+hola de nuevo carla.
+```
+
 **CÓDIGO COMPLETO**
 ```ts
   handler(argv) {
@@ -160,7 +206,7 @@ Este emite un evento `rename`
 ¿Y cuando se modifica?
 Emite un evento de tipo `change`
 
-Para monitorear los cambios y tipos de eventos, para cuando se produce un evento `change` llama a la función `eventChange(`${pathFile}${argv.user}/`, `${file}`);`. Esta tiene el siguiente contenido:
+Para monitorear los cambios y tipos de eventos, siendo del tipo `change` llama a la función `eventChange(`${pathFile}${argv.user}/`,`${file}`);`. Esta tiene el siguiente contenido en el fichero `ges-eventos.ts`:
 
 ```ts
 import * as fs from 'fs';
@@ -180,8 +226,9 @@ export function eventChange(dir: string, file: string) {
     }
   });
 }
-
 ```
+Como se puede ver que para visualizar los cambios en el fichero de notas correspondiente, hago uso `watchFile` de esta manera puedo comprobar que el fichero ha sido creado, modificado o confirmar que ha sido eliminado(ya que cuando se elimaba un fichero se producía un evento `rename` y luego `change`, entonces al producir el evento `change` se tenía que volver a confirmar la eliminación).
+
 
 ```ts
 /**
@@ -223,4 +270,57 @@ export function eventChange(dir: string, file: string) {
     }
   },
 });
+```
+Un Ejemplo de salida cuando se agrega una nota:
+
+En una terminal ejecutamos la `note-apps.js` para agregar una nota. En la segunda terminal ejecutamos `note-apps.js` para visualizar los cambios en el directorio del usuario que tiene las notas.
+
+**Primer terminal**
+```console
+[~/p10(master)]$node dist/ejercicio3/class/note-app.js change --user="carla" --dir="./src/Notes/carla" 
+```
+
+**Segunda Consola**
+```console
+[~/p10(master)]$node dist/ejercicio3/class/note-app.js add --user="carla" --title="terce-nota" --body="tercer nota de carla" --color="green"
+Nota agregada
+```
+
+Tras ejecutar lo anterior en la segunda terminal tenemos lo siguiente en la primer terminal que visualiza los cambios:
+
+```console
+Cambio en el directorio ../Notes/carla
+Tipo de evento: rename
+Cambio en el directorio ../Notes/carla
+Tipo de evento: change
+El fichero terce-nota.json ha sido creado
+El fichero terce-nota.json ha sido creado
+El fichero terce-nota.json ha sido creado
+
+```
+
+Tras una modificación en el fichero de notas creado`(terce-nota.json)` tenemos:
+
+```console
+Cambio en el directorio ../Notes/carla
+Tipo de evento: change
+Cambio en el directorio ../Notes/carla
+Tipo de evento: change
+Cambio en el directorio ../Notes/carla
+Tipo de evento: change
+El fichero terce-nota.json ha sido modificado
+El fichero terce-nota.json ha sido modificado
+El fichero terce-nota.json ha sido modificado
+El fichero terce-nota.json ha sido modificado
+```
+Tras la elimnación del fichero de notas creado con anterioridad`(terce-nota.json)` tenemos:
+
+```console
+Cambio en el directorio ../Notes/carla
+Tipo de evento: rename
+El fichero terce-nota.json ha sido eliminado
+El fichero terce-nota.json ha sido eliminado
+El fichero terce-nota.json ha sido eliminado
+El fichero terce-nota.json ha sido eliminado
+El fichero terce-nota.json ha sido eliminado
 ```
